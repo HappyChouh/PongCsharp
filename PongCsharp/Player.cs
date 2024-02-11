@@ -1,19 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace PongCsharp
 {
-    internal class Player : Sprite
+    internal class Player : SpriteMouvement
     {
-        private float speed;
 
-        public Player(Texture2D texture, Vector2 position) : base(texture, position)
+        public Player(Texture2D texture, Vector2 position, float scale) : base(texture, position, scale)
         {
+            Speed = 100f;
         }
 
         public override void Update(GameTime gameTime)
         {
-
             base.Update(gameTime);
         }
     }
