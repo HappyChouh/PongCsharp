@@ -9,7 +9,7 @@ namespace PongCsharp
 
         public Player(Texture2D texture, Vector2 position, float scale) : base(texture, position, scale)
         {
-            Speed = 100f;
+            Speed = 500f;
         }
 
         public override void Update(GameTime gameTime)

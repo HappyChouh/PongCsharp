@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.DirectWrite;
+using System;
 using System.Diagnostics;
 
 namespace PongCsharp
@@ -53,16 +55,12 @@ namespace PongCsharp
                 Exit();
 
             KeyboardState keyboardState = Keyboard.GetState();
-            float acceleration = 100f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             float maxHeightPlayer = (float)_graphics.PreferredBackBufferHeight;
             float minHeightPlayer = 0;
 
 
             //new Vector2(playerTwo.Texture.Height / 2)
-            if (playerOne.Speed < 500f)
-            {
-                playerOne.Speed += acceleration;
-            }
 
             if (keyboardState.IsKeyDown(Keys.A) && playerOne.Position.Y <= maxHeightPlayer)
             {
@@ -74,10 +72,6 @@ namespace PongCsharp
                 playerOne.Position.Y -= playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            if (playerTwo.Speed < 500f)
-            {
-                playerTwo.Speed += acceleration;
-            }
 
             if (keyboardState.IsKeyDown(Keys.Left) && playerTwo.Position.Y <= maxHeightPlayer)
             {
@@ -89,7 +83,21 @@ namespace PongCsharp
                 playerTwo.Position.Y -= playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
+
+
+            if (!ball.IsOnMovement && keyboardState.IsKeyDown(Keys.Space))
+            {
+                ball.IsOnMovement = true;
+            }
+
+            if (ball.IsOnMovement)
+            {
+                ball.Update(gameTime);
+
+            }
+
             Debug.WriteLine(playerOne.Position + " " + playerOne.Speed + " max :" + maxHeightPlayer + " min :" + minHeightPlayer);
+            Debug.WriteLine(ball.Position + " " + ball.Speed);
 
             // TODO: Add your update logic here
 
@@ -104,6 +112,9 @@ namespace PongCsharp
             _spriteBatch.Draw(playerOne.Texture, playerOne.Position, null, Color.White, 0f, new Vector2(playerOne.Texture.Width / 2, playerOne.Texture.Height / 2), new Vector2(playerOne.Scale), SpriteEffects.None, 0f);
             _spriteBatch.Draw(playerTwo.Texture, playerTwo.Position, null, Color.White, 0f, new Vector2(playerTwo.Texture.Width / 2, playerTwo.Texture.Height / 2), new Vector2(playerTwo.Scale), SpriteEffects.None, 0f);
             _spriteBatch.Draw(ball.Texture, ball.Position, null, Color.White, 0f, new Vector2(ball.Texture.Width / 2, ball.Texture.Height / 2), new Vector2(ball.Scale), SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("font"), playerOne.Position.ToString(), Vector2.One, Color.White);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("font"), playerTwo.Position.ToString(), new Vector2(1120, 1), Color.White);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("font"), ball.Position.ToString(), new Vector2(650, 500), Color.White);
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
