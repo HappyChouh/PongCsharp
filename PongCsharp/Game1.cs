@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.DirectWrite;
-using System;
-using System.Diagnostics;
 
 namespace PongCsharp
 {
@@ -55,6 +54,7 @@ namespace PongCsharp
                 Exit();
 
             KeyboardState keyboardState = Keyboard.GetState();
+            Random random = new Random();
 
             float maxHeightPlayer = (float)_graphics.PreferredBackBufferHeight;
             float minHeightPlayer = 0;
@@ -63,38 +63,64 @@ namespace PongCsharp
             //new Vector2(playerTwo.Texture.Height / 2)
 
             if (keyboardState.IsKeyDown(Keys.A) && playerOne.Position.Y <= maxHeightPlayer)
-            {
                 playerOne.Position.Y += playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
 
             if (keyboardState.IsKeyDown(Keys.E) && playerOne.Position.Y >= minHeightPlayer)
-            {
                 playerOne.Position.Y -= playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
 
 
             if (keyboardState.IsKeyDown(Keys.Left) && playerTwo.Position.Y <= maxHeightPlayer)
-            {
                 playerTwo.Position.Y += playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
 
             if (keyboardState.IsKeyDown(Keys.Right) && playerTwo.Position.Y >= minHeightPlayer)
-            {
                 playerTwo.Position.Y -= playerOne.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-
-
 
             if (!ball.IsOnMovement && keyboardState.IsKeyDown(Keys.Space))
             {
-                ball.IsOnMovement = true;
+                if (random.Next() % 2 == 0)
+                {
+                    if (random.Next() % 2 == 0)
+                        ball.SetDirectionTopLeft();
+                    else
+                        ball.SetDirectionTopRight();
+
+                }
+                else
+                {
+                    if (random.Next() % 2 == 0)
+                        ball.SetDirectionBotLeft();
+                    else
+                        ball.SetDirectionBotRight();
+                }
             }
 
-            if (ball.IsOnMovement)
+
+            ball.Update(gameTime);
+
+            if (ball.Rect.Y <= 0f)
             {
-                ball.Update(gameTime);
-
+                ball.SetDirectionBot();
             }
+            else if (ball.Rect.Y >= (float)_graphics.PreferredBackBufferHeight)
+            {
+                ball.SetDirectionTop();
+            }
+
+            if (ball.IsTouchingLeft(playerOne))
+            {
+                ball.Directions["top"] = !ball.Directions["top"];
+                ball.Directions["bot"] = !ball.Directions["bot"];
+                ball.Directions["right"] = !ball.Directions["right"];
+                ball.Directions["left"] = !ball.Directions["left"];
+            }
+            else if(ball.Rect.Intersects(playerTwo.Rect))
+            {
+                ball.Directions["top"] = !ball.Directions["top"];
+                ball.Directions["bot"] = !ball.Directions["bot"];
+                ball.Directions["right"] = !ball.Directions["right"];
+                ball.Directions["left"] = !ball.Directions["left"];
+            }
+
 
             Debug.WriteLine(playerOne.Position + " " + playerOne.Speed + " max :" + maxHeightPlayer + " min :" + minHeightPlayer);
             Debug.WriteLine(ball.Position + " " + ball.Speed);
